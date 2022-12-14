@@ -8,13 +8,13 @@
 
 1. With file:
 ```bash
-./colorize <path to file>
+colorize <path to file>
 ```
 2. By piping the output of commands like `cat` or `tail`:
 ```bash
-cat example.log | ./colorize
+cat example.log | colorize
 ```
 
 ```bash
-tail example.log | ./colorize    
+tail example.log | colorize    
 ```
