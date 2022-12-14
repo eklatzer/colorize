@@ -4,7 +4,7 @@
 
 ## Usage
 
-`colorize` can be used by directly providing the path to a logfile or by piping the output of some other command into it.
+`colorize` can be used by directly providing the path to a logfile (absolute or relative) or by piping the output of some other command like `cat` or `tail` into it.
 
 1. With file:
 ```bash
