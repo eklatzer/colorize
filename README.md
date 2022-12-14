@@ -32,38 +32,11 @@ If no config file is provided default values are taken.
 ```yaml
 colors:
   - expression: (?i).*fatal.*
-    color: FgHiRed
+    color: "#FF0000"
   - expression: (?i).*error.*
-    color: FgRed
+    color: "#FFA500"
   - expression: (?i).*warn.*
-    color: FgYellow
-  - expression: (?i).*info.*
-    color: FgBlue
-  - expression: (?i).*debug.*
-    color: FgGreen
-  - expression: (?i).*trace.*
-    color: FgHiCyan
+    color: "#FFFF00"
 default:
-  color: FgWhite
+  color: "#FFFFF"
 ```
-
-Possible colors:
-* `FgBlack`
-* `FgRed`
-* `FgGreen`
-* `FgYellow`
-* `FgBlue`
-* `FgMagenta`
-* `FgCyan`
-* `FgWhite`
-* `FgHiBlack`
-* `FgHiRed`
-* `FgHiGreen`
-* `FgHiYellow`
-* `FgHiBlue`
-* `FgHiMagenta`
-* `FgHiCyan`
-* `FgHiWhite`
-
-
-

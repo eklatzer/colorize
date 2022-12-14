@@ -3,13 +3,14 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 
-	"colorize/colorprinter"
 	"colorize/config"
 )
 
@@ -30,7 +31,7 @@ func main() {
 	if err != nil {
 		cfg = config.DefaultConfig
 	}
-	err = cfg.Init()
+	err = cfg.CompileRegexes()
 	if err != nil {
 		log.Fatalf("failed to init config: %v", err)
 	}
@@ -46,7 +47,7 @@ func main() {
 	}
 
 	for scanner.Scan() {
-		colorprinter.PrintLineColorized(scanner.Text(), cfg.Colors, cfg.Default.ColorValue)
+		printLineColorized(scanner.Text(), cfg.Colors, cfg.Default.Color)
 	}
 }
 
@@ -65,4 +66,17 @@ func getScannerForFile(path string) (*bufio.Scanner, error) {
 func isInputFromPipe() bool {
 	fileInfo, _ := os.Stdin.Stat()
 	return fileInfo.Mode()&os.ModeCharDevice == 0
+}
+
+func printLineColorized(text string, colorMappings []*config.ColorForLevel, defaultColor string) {
+	for _, colorizing := range colorMappings {
+		if colorizing.Regex.MatchString(text) {
+			style := lipgloss.NewStyle().Foreground(lipgloss.Color(colorizing.Color))
+			fmt.Println(style.Render(text))
+			return
+		}
+	}
+
+	defaultColorStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(defaultColor))
+	fmt.Println(defaultColorStyle.Render(text))
 }
