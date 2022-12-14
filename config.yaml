@@ -6,4 +6,4 @@ colors:
   - expression: (?i).*warn.*
     color: "#FFFF00"
 default:
-  color: "#FFFFF"
+  color: "#FF00FF"

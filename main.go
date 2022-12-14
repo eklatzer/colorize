@@ -17,6 +17,11 @@ import (
 var cfgFile string
 var cfg config.Config
 
+func init() {
+	flag.StringVar(&cfgFile, "config", "", "Path to the config file (default: $HOME/.colorized.yaml)")
+	flag.Parse()
+}
+
 func main() {
 	if cfgFile == "" {
 		home, err := homedir.Dir()
@@ -35,6 +40,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to init config: %v", err)
 	}
+
+	log.Println(cfg.Default.Color)
 
 	var scanner *bufio.Scanner
 	if isInputFromPipe() {
