@@ -30,7 +30,7 @@ var RootCmd = &cobra.Command{
 		if isInputFromPipe() {
 			scanner = bufio.NewScanner(bufio.NewReader(os.Stdin))
 		} else {
-			err := cobra.MinimumNArgs(1)(cmd, args)
+			err := cobra.ExactArgs(1)(cmd, args)
 			if err != nil {
 				cmd.Help()
 				return
