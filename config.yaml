@@ -1,16 +1,15 @@
-colorizing:
-    colors:
-        - expression: (?i).*fatal.*
-          color: FgHiRed
-        - expression: (?i).*error.*
-          color: FgRed
-        - expression: (?i).*warn.*
-          color: FgYellow
-        - expression: (?i).*info.*
-          color: FgBlue
-        - expression: (?i).*debug.*
-          color: FgGreen
-        - expression: (?i).*trace.*
-          color: FgHiCyan
-    default:
-        color: FgWhite
+colors:
+  - expression: (?i).*fatal.*
+    color: FgHiRed
+  - expression: (?i).*error.*
+    color: FgRed
+  - expression: (?i).*warn.*
+    color: FgYellow
+  - expression: (?i).*info.*
+    color: FgBlue
+  - expression: (?i).*debug.*
+    color: FgGreen
+  - expression: (?i).*trace.*
+    color: FgHiCyan
+default:
+  color: FgWhite

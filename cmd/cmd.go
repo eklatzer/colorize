@@ -8,7 +8,6 @@ import (
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"colorize/colorprinter"
 	"colorize/config"
@@ -42,7 +41,7 @@ var RootCmd = &cobra.Command{
 		}
 
 		for scanner.Scan() {
-			colorprinter.PrintLineColorized(scanner.Text(), cfg.Colorizing.Colors, cfg.Colorizing.Default.ColorValue)
+			colorprinter.PrintLineColorized(scanner.Text(), cfg.Colors, cfg.Default.ColorValue)
 		}
 	},
 }
@@ -65,31 +64,21 @@ func isInputFromPipe() bool {
 }
 
 func onInitCobra() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
+	if cfgFile == "" {
 		home, err := homedir.Dir()
 		if err != nil {
 			log.Fatalf("%v: failed to detect homedir, please provide configfile with flag --config", err)
 		}
-		viper.SetConfigFile(filepath.Join(home, ".colorized.yaml"))
+		cfgFile = filepath.Join(home, ".colorized.yaml")
 	}
-	err := readConfigInto(&cfg)
+
+	var err error
+	cfg, err = config.FromFile(cfgFile)
 	if err != nil {
-		log.Debug("failed to load config (%v), using default values", err)
 		cfg = config.DefaultConfig
 	}
 	err = cfg.Init()
 	if err != nil {
-		log.Fatalf("failed to parse color: %v", err)
+		log.Fatalf("failed to init config: %v", err)
 	}
-}
-
-func readConfigInto(config interface{}) error {
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
-	}
-	err = viper.Unmarshal(&config)
-	return err
 }
