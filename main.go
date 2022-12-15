@@ -8,13 +8,14 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/mitchellh/go-homedir"
 	"gopkg.in/yaml.v3"
 
 	"colorize/config"
 )
 
-const defaultConfigFile = ".colorized.yaml"
+const defaultConfigFile = ".colorize.yaml"
 
 var flagValues flags
 
@@ -37,6 +38,8 @@ func init() {
 func main() {
 	cfg, err := config.FromFile(flagValues.configFile)
 	if err != nil {
+		msg := fmt.Sprintf("[WARN] using default config as failed to load config: %v", err)
+		fmt.Println(lipgloss.NewStyle().Foreground(lipgloss.Color("#818589")).Render(msg))
 		cfg = config.DefaultConfig
 	}
 
