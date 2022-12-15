@@ -25,7 +25,10 @@ The regex-matching and the used colors can be configured in two ways:
 * By defining a config file with the flag `--config`
 * Config file at the home directory: `$HOME/.colorized.yaml`
 
-To print the default config the flag `--print-default-config` can be used.
+To print the default config the flag `--print-default-config` can be used:
+```bash
+colorize --print-default-config > $HOME/.colorize.yaml
+```
 
 If no config file is provided default values are taken.
 ": .*color.*

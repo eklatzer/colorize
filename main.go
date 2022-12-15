@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -28,7 +29,7 @@ func init() {
 		if err != nil {
 			log.Fatalf("failed to marshal config: %v", err)
 		}
-		log.Println(string(out))
+		fmt.Println(string(out))
 		os.Exit(0)
 	}
 }
