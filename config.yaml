@@ -1,9 +1,16 @@
-colors:
+ruleset:
   - expression: (?i).*fatal.*
-    color: "#FF0000"
+    colorscheme:
+      foreground: '#FF00B'
+      background: ''
   - expression: (?i).*error.*
-    color: "#FFA500"
+    colorscheme:
+      foreground: '#FFA500'
+      background: ""
   - expression: (?i).*warn.*
-    color: "#FFFF00"
+    colorscheme:
+      foreground: '#FFFF00'
+      background: ""
 default:
-  color: "#FF00FF"
+    foreground: '#ADD8E6'
+    background: ""

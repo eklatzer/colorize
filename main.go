@@ -3,45 +3,41 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/mitchellh/go-homedir"
+	"gopkg.in/yaml.v3"
 
 	"colorize/config"
 )
 
-var cfgFile string
-var cfg config.Config
+const defaultConfigFile = ".colorized.yaml"
+
+var flagValues flags
 
 func init() {
-	flag.StringVar(&cfgFile, "config", "", "Path to the config file (default: $HOME/.colorized.yaml)")
+	home, _ := homedir.Dir()
+	flag.StringVar(&flagValues.configFile, "config", filepath.Join(home, defaultConfigFile), "Path to the config file")
+	flag.BoolVar(&flagValues.printDefaultConfig, "print-default-config", false, "Whether to print the default-config")
 	flag.Parse()
+
+	if flagValues.printDefaultConfig {
+		out, err := yaml.Marshal(config.DefaultConfig)
+		if err != nil {
+			log.Fatalf("failed to marshal config: %v", err)
+		}
+		log.Println(string(out))
+		os.Exit(0)
+	}
 }
 
 func main() {
-	if cfgFile == "" {
-		home, err := homedir.Dir()
-		if err != nil {
-			log.Fatalf("%v: failed to detect homedir, please provide configfile with flag --config", err)
-		}
-		cfgFile = filepath.Join(home, ".colorized.yaml")
-	}
-
-	var err error
-	cfg, err = config.FromFile(cfgFile)
+	cfg, err := config.FromFile(flagValues.configFile)
 	if err != nil {
 		cfg = config.DefaultConfig
 	}
-	err = cfg.CompileRegexes()
-	if err != nil {
-		log.Fatalf("failed to init config: %v", err)
-	}
-
-	log.Println(cfg.Default.Color)
 
 	var scanner *bufio.Scanner
 	if isInputFromPipe() {
@@ -49,12 +45,12 @@ func main() {
 	} else {
 		scanner, err = getScannerForFile(flag.Arg(0))
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("failed to read file: %v\n", err)
 		}
 	}
 
 	for scanner.Scan() {
-		printLineColorized(scanner.Text(), cfg.Colors, cfg.Default.Color)
+		printLineColorized(scanner.Text(), cfg)
 	}
 }
 
@@ -75,15 +71,13 @@ func isInputFromPipe() bool {
 	return fileInfo.Mode()&os.ModeCharDevice == 0
 }
 
-func printLineColorized(text string, colorMappings []*config.ColorForLevel, defaultColor string) {
-	for _, colorizing := range colorMappings {
-		if colorizing.Regex.MatchString(text) {
-			style := lipgloss.NewStyle().Foreground(lipgloss.Color(colorizing.Color))
-			fmt.Println(style.Render(text))
+func printLineColorized(text string, cfg config.Config) {
+	for _, rule := range cfg.Ruleset {
+		if rule.MatchString(text) {
+			rule.ColorScheme.PrintlnColored(text)
 			return
 		}
 	}
 
-	defaultColorStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(defaultColor))
-	fmt.Println(defaultColorStyle.Render(text))
+	cfg.Default.PrintlnColored(text)
 }

@@ -5,16 +5,21 @@ import (
 	"io/ioutil"
 	"regexp"
 
+	"github.com/charmbracelet/lipgloss"
 	"gopkg.in/yaml.v3"
+
+	"colorize/config/regex"
 )
 
 var DefaultConfig = Config{
-	Colors: []*ColorForLevel{
-		{Expression: "(?i).*fatal.*", Color: "#FF0000"},
-		{Expression: "(?i).*error.*", Color: "#FFA500"},
-		{Expression: "(?i).*warn.*", Color: "#FFFF00"},
+	Ruleset: []Rule{
+		{Expression: regex.Expression{Regexp: regexp.MustCompile("(?i).*fatal.*")}, ColorScheme: ColorScheme{Foreground: "#FF0000"}},
+		{Expression: regex.Expression{Regexp: regexp.MustCompile("(?i).*error.*")}, ColorScheme: ColorScheme{Foreground: "#FFA500"}},
+		{Expression: regex.Expression{Regexp: regexp.MustCompile("(?i).*warn.*")}, ColorScheme: ColorScheme{Foreground: "#FFFF00"}},
 	},
-	Default: &ColorForLevel{Color: "#ADD8E6"},
+	Default: ColorScheme{
+		Foreground: "#ADD8E6",
+	},
 }
 
 func FromFile(path string) (Config, error) {
@@ -29,23 +34,25 @@ func FromFile(path string) (Config, error) {
 }
 
 type Config struct {
-	Colors  []*ColorForLevel
-	Default *ColorForLevel
+	Ruleset []Rule
+	Default ColorScheme
 }
 
-type ColorForLevel struct {
-	Expression string
-	Color      string
-	Regex      *regexp.Regexp
+type Rule struct {
+	Expression  regex.Expression
+	ColorScheme ColorScheme
 }
 
-func (c *Config) CompileRegexes() error {
-	for _, colorizing := range c.Colors {
-		regex, err := regexp.Compile(colorizing.Expression)
-		if err != nil {
-			return fmt.Errorf("failed to compile regex: %v", err)
-		}
-		colorizing.Regex = regex
-	}
-	return nil
+func (r *Rule) MatchString(m string) bool {
+	return r.Expression.Regexp.MatchString(m)
+}
+
+type ColorScheme struct {
+	Foreground string
+	Background string
+}
+
+func (c *ColorScheme) PrintlnColored(text string) {
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color(c.Foreground)).Background(lipgloss.Color(c.Background))
+	fmt.Println(style.Render(text))
 }

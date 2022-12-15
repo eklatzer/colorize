@@ -22,21 +22,31 @@ tail example.log | colorize
 ## Configuration
 
 The regex-matching and the used colors can be configured in two ways:
-* Config file at the home directory: `$HOME/.colorized.yaml`
 * By defining a config file with the flag `--config`
+* Config file at the home directory: `$HOME/.colorized.yaml`
+
+To print the default config the flag `--print-default-config` can be used.
 
 If no config file is provided default values are taken.
 ": .*color.*
 ### Example Configuration
 
 ```yaml
-colors:
+ruleset:
   - expression: (?i).*fatal.*
-    color: "#FF0000"
+    colorscheme:
+      foreground: '#FF00B'
+      background: ''
   - expression: (?i).*error.*
-    color: "#FFA500"
+    colorscheme:
+      foreground: '#FFA500'
+      background: ""
   - expression: (?i).*warn.*
-    color: "#FFFF00"
+    colorscheme:
+      foreground: '#FFFF00'
+      background: ""
 default:
-  color: "#FFFFF"
+    foreground: '#ADD8E6'
+    background: ""
+
 ```
